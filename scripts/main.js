@@ -31,13 +31,13 @@ for (let i = 0; i < carts.length; i++) {
 	});
 }
 // initializing the array for storing items in cart, if there is no products in the cart, create new array
-if (!localStorage.getItem("productsInCart")) {
-	localStorage.setItem("productsInCart", "[]");
+if (!sessionStorage.getItem("productsInCart")) {
+	sessionStorage.setItem("productsInCart", "[]");
 }
 
 // When loading the page, cart numbers reflect what is in the local storage
 function onLoadCartNumbers() {
-	let productNumbers = localStorage.getItem("cartNumbers");
+	let productNumbers = sessionStorage.getItem("cartNumbers");
 	if (productNumbers) {
 		document.querySelector(".cart span").textContent = productNumbers;
 	}
@@ -45,21 +45,21 @@ function onLoadCartNumbers() {
 
 // Adds to local storage, adds to cart button value, gets number from local storage as str then converts to a number
 function cartNumbers(product, action) {
-	let productNumbers = localStorage.getItem("cartNumbers");
+	let productNumbers = sessionStorage.getItem("cartNumbers");
 	// check local storage, if cleared, returns to NaN to not update cart
 	// Converts productnumbers from str to int because you can't add str
 	productNumbers = parseInt(productNumbers);
 	if (productNumbers) {
 		// if 1 exists, and clicked again, updates cart to reflect how much items in cart
 		if (action === "add") {
-			localStorage.setItem("cartNumbers", productNumbers + 1);
+			sessionStorage.setItem("cartNumbers", productNumbers + 1);
 			document.querySelector(".cart span").textContent = productNumbers + 1;
 		} else if (action === "remove") {
-			localStorage.setItem("cartNumbers", productNumbers - 1);
+			sessionStorage.setItem("cartNumbers", productNumbers - 1);
 			document.querySelector(".cart span").textContent = productNumbers - 1;
 		}
 	} else {
-		localStorage.setItem("cartNumbers", 1);
+		sessionStorage.setItem("cartNumbers", 1);
 		// if 1 exists, do nothing and show it has 1 value in cart
 		document.querySelector(".cart span").textContent = 1;
 	}
@@ -68,7 +68,7 @@ function cartNumbers(product, action) {
 // function to store objects in session storage, makes object into JSON format
 function setItems(product) {
 	// need to check if my product is already in the storage so it doesn't overwrite existing items
-	let cartItems = localStorage.getItem("productsInCart");
+	let cartItems = sessionStorage.getItem("productsInCart");
 	// lets the cartItems back to javascript objects
 	cartItems = JSON.parse(cartItems);
 	// If there are no cart items of the same type add +1, uses the some function if the itemid is in cart if true then add if not minus
@@ -104,28 +104,28 @@ function setItems(product) {
 		];
 	}
 	// uses JSON stringify to make object into JSON format so sessionstorage can read it instead of object object
-	localStorage.setItem("productsInCart", JSON.stringify(cartItems));
+	sessionStorage.setItem("productsInCart", JSON.stringify(cartItems));
 }
 // pass the object into the totalCost function to get price and update the total sum accoridingly
 function totalCost(product, action) {
 	// console.log("The product price is", product.price);
-	let cartCost = localStorage.getItem("totalCost");
+	let cartCost = sessionStorage.getItem("totalCost");
 
 	if (cartCost != null) {
 		// maybe change to parse float? converts cartCost to a number since I need to add sum
 		cartCost = parseInt(cartCost);
 		if (action === "add") {
-			localStorage.setItem("totalCost", cartCost + product.price);
+			sessionStorage.setItem("totalCost", cartCost + product.price);
 		} else if (action === "remove") {
-			localStorage.setItem("totalCost", cartCost - product.price);
+			sessionStorage.setItem("totalCost", cartCost - product.price);
 		}
 	} else {
-		localStorage.setItem("totalCost", product.price);
+		sessionStorage.setItem("totalCost", product.price);
 	}
 }
 // pass in the action which is a string to either add or remove the item by itemId
 function changeItemCount(itemId, action) {
-	let cartItems = localStorage.getItem("productsInCart");
+	let cartItems = sessionStorage.getItem("productsInCart");
 	cartItems = JSON.parse(cartItems);
 	// need to find the index of the array and returns the array
 	const index = cartItems.findIndex(
@@ -166,7 +166,7 @@ function changeItemCount(itemId, action) {
 		cartNumbers(item, "add");
 	}
 	// stores the products in cart in localstorage using JSON
-	localStorage.setItem("productsInCart", JSON.stringify(cartItems));
+	sessionStorage.setItem("productsInCart", JSON.stringify(cartItems));
 
 	displayCart();
 }
@@ -174,7 +174,7 @@ function changeItemCount(itemId, action) {
 // function that displays summary
 function displayCart() {
 	// Getting JSON data and transforming to display in DOM
-	const custData = JSON.parse(localStorage.getItem("customerData"));
+	const custData = JSON.parse(sessionStorage.getItem("customerData"));
 	const custDataEl = document.querySelector("#customerData");
 	// Loop over customer data item and form data entries using destructuring (I just the values so values, then creating a li using a for loop
 	for (const [, val] of Object.entries(custData)) {
@@ -185,13 +185,13 @@ function displayCart() {
 		}
 	}
 
-	let cartItems = localStorage.getItem("productsInCart");
+	let cartItems = sessionStorage.getItem("productsInCart");
 	// need to parse back JSON files to objects so we can display in DOM
 	cartItems = JSON.parse(cartItems);
 	// Target the products div so we can create a new div, see below
 	let productContainer = document.querySelector(".products");
 	// Display total cost
-	let cartCost = localStorage.getItem("totalCost");
+	let cartCost = sessionStorage.getItem("totalCost");
 	// If these two things are running in the localstorage
 	if (cartItems && productContainer) {
 		// need to change innerHTML
